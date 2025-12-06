@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>qsetter</title>
+    </head>
+    <body>
+        <header>出題設定</header>
+        <div style="margin: 30px; display:flex; flex-direction: column;">
+            <h2>問題ファイルを選択</h2>
+            <div id="selectedfile" class="card">
+                選択されていません
+            </div>
+            <div style="display: flex; justify-items: center; align-items: center; margin-top: 10px;">
+                <md-filled-button id="uploadButton">ファイルを選択</md-filled-button>
+                <input type="file" accept=".txt" id="fileInput" style="display: none;" />
+                <md-filled-button id="clearStorage" style="margin-left: 10px;">新規作成(未実装)</md-filled-button>
+            </div>
+            <h3>・履歴から選択</h3>
+            <md-list id="history">
+                <md-list-item>
+                    履歴はありません
+                </md-list-item>
+            </md-list>
+            <hr style="margin: 10px"/>
+            <h2>詳細設定</h2>
+            <label style="display:flex; align-items: center; cursor: pointer;">
+                <md-checkbox id="randomOrder" touch-target="wrapper"></md-checkbox>
+                出題順をランダムにする
+            </label>
+            <label style="display:flex; align-items: center; cursor: pointer;">
+                <md-checkbox id="rangelimit" touch-target="wrapper"></md-checkbox>
+                出題範囲を指定する
+            </label>
+            <div style="display: flex; align-items: center; margin: 0px 10px 10px 48px; gap: 10px;">                
+                <md-outlined-text-field label="開始番号" type="number" id="startindex" min="1" disabled></md-outlined-text-field>
+                ～
+                <md-outlined-text-field label="終了番号" type="number" id="endindex" min="1" disabled></md-outlined-text-field>
+                から出題します。
+            </div>
+            </md-outlined-text-field>
+            <hr style="margin: 10px"/>
+            <div style="display: flex; justify-content: center;">
+                <md-filled-button id="startButton" style="width: 75%;">出題開始</md-filled-button>
+
+            </div>
+        </div>
+        <script type="module" src="/src/main.js"></script>
+        <script>
+            const fileInput = document.getElementById('fileInput');
+            const uploadButton = document.getElementById('uploadButton');
+            const selectedFileDiv = document.getElementById('selectedfile');
+            let questionData = null;
+            uploadButton.addEventListener('click', () => {
+                fileInput.click();
+                fileInput.value = null; // 同じファイルを選択したときにchangeイベントが発火しない問題の対策
+            });
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    selectedFileDiv.textContent = `選択されたファイル: ${file.name}`;
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = function(e) {
+                        try {
+                            const rawData = reader.result;
+                            questionData = rawData.split("\n").map(row => row.split(";"));
+                            localStorage.setItem(file.name, JSON.stringify(questionData));
+                            for (let i = 0; i < questionData.length; i++) {
+                                if (questionData[i].length != 2) {
+                                    throw new Error(`行 ${i + 1} に不正なデータがあります`);
+                                }
+                            }
+                            console.log('読み込まれたデータ:', questionData);
+                            selectedFileDiv.style.backgroundColor = '#b8d7ed';
+                        } catch (error) {
+                            console.error('ファイルの読み込み中にエラーが発生しました:', error);
+                            selectedFileDiv.textContent = error.message;
+                            selectedFileDiv.style.backgroundColor = '#ffb5ba';
+                        }
+                    };
+                } else {
+                    selectedFileDiv.textContent = '選択されていません';
+                }
+            });
+
+            const historyList = document.getElementById('history');
+            if (localStorage.length === 0) {
+                historyList.innerHTML = '<md-list-item>履歴はありません</md-list-item>';
+            } else {
+                historyList.innerHTML = '';
+            }
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key === null) continue;
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    if (Array.isArray(data) && data.every(row => Array.isArray(row) && row.length === 2)) {
+                        const listItem = document.createElement('md-list-item');
+                        listItem.textContent = key;
+                        listItem.style.cursor = 'pointer';
+                        listItem.addEventListener('click', () => {
+                            questionData = data;
+                            selectedFileDiv.textContent = `選択されたファイル: ${key}`;
+                            selectedFileDiv.style.backgroundColor = '#b8d7ed';
+                        });
+                        historyList.appendChild(listItem);
+                    }
+                } catch (e) {
+                    // 無効なデータは無視
+                }
+            }
+            document.getElementById('rangelimit').addEventListener('change', (event) => {
+                const enabled = event.target.checked;
+                document.getElementById('startindex').disabled = !enabled;
+                document.getElementById('endindex').disabled = !enabled;
+            });
+
+            const startButton = document.getElementById('startButton');
+            startButton.addEventListener('click', () => {
+                if (!questionData) {
+                    alert('問題ファイルが選択されていません');
+                    return;
+                }
+                if (document.getElementById('rangelimit').checked) {
+                    const startIndex = parseInt(document.getElementById('startindex').value) - 1;
+                    const endIndex = parseInt(document.getElementById('endindex').value) - 1;
+                    if (isNaN(startIndex) || isNaN(endIndex) || startIndex < 0 || endIndex >= questionData.length || startIndex > endIndex) {
+                        alert('出題範囲の指定が不正です');
+                        return;
+                    }
+                    questionData = questionData.slice(startIndex, endIndex + 1);
+                }
+                if (document.getElementById('randomOrder').checked) {
+                    // Fisher-Yatesアルゴリズムで配列をシャッフル
+                    for (let i = questionData.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [questionData[i], questionData[j]] = [questionData[j], questionData[i]];
+                    }
+                }
+                const params = new URLSearchParams();
+                params.append('qn',1);
+                sessionStorage.setItem('questionData', JSON.stringify(questionData));
+                window.location.href = `/quest/?${params.toString()}`;
+            });
+        </script>
+    </body>
+</html>

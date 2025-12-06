@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/Qsetter/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>qsetter</title>
+      <script type="module" crossorigin src="/Qsetter/assets/main-DK2S0FHx.js"></script>
+      <link rel="stylesheet" crossorigin href="/Qsetter/assets/main-BJ4FWFaq.css">
+    </head>
+    <body>
+        <header>出題結果</header>
+        <div style="margin: 30px; display:flex; flex-direction: column;">
+            <h2>間違えた問題</h2>
+            <div class="gridwrapper">
+                <div class="wronglist" id="wronglist">
+                    <div class="griditem" style="font-weight: bold;">番号</div>
+                    <div class="griditem" style="font-weight: bold;">問題文</div>
+                    <div class="griditem" style="font-weight: bold;">あなたの回答</div>
+                    <div class="griditem" style="font-weight: bold;">正解</div>
+                </div>
+            </div>
+            <div id="allclear" style="font-size: 1.2rem; font-weight: bold; text-align: center;"></div>
+            <div style="display:flex; justify-content: center; align-items:center; flex-direction: column;">
+                <md-filled-button id="backToHome" style="width: 80%; margin-top: 20px;">ホームに戻る</md-filled-button>
+                <md-filled-button id="restart" style="width: 80%; margin-top: 20px;">間違えた問題をやり直す</md-filled-button>
+            </div>
+        </div>
+        <script>
+            // ページ読み込み時にquestionDataがなければホームにリダイレクト
+            document.addEventListener('DOMContentLoaded', () => {
+                if (sessionStorage.getItem('questionData') === null) {
+                window.location.href = '/';
+                console.log('No question data found, redirecting to home.');
+                }
+                document.getElementById('answerfield').focus();
+            });
+            const wronglist = document.getElementById('wronglist');
+            const restartButton =document.getElementById('restart');
+            const questionData = JSON.parse(sessionStorage.getItem('questionData'));
+            const wrongnumbers = sessionStorage.getItem('wrongnumbers') ? JSON.parse(sessionStorage.getItem('wrongnumbers')) : [];
+            if (wrongnumbers.length === 0) {
+                const clear = document.getElementById('allclear');
+                clear.textContent = '間違えた問題はありません！おめでとうございます！';
+                restartButton.style.display = 'none';
+            } else {
+                for (let i = 0; i < wrongnumbers.length; i++) {
+                    const qnIndex = wrongnumbers[i][0][0];
+                    const userAnswer = wrongnumbers[i][1][0];
+                    const row = document.createElement('div');
+                    
+                    const cell1 = document.createElement('div');
+                    cell1.className = 'griditem';
+                    cell1.textContent = (qnIndex + 1).toString();
+                    cell1.style.gridColumn = "1"
+                    cell1.style.gridRow = (i + 2).toString();
+                    wronglist.appendChild(cell1);
+                    
+                    const cell2 = document.createElement('div');
+                    cell2.className = 'griditem';
+                     cell2.textContent = questionData[qnIndex][0];
+                    wronglist.appendChild(cell2);
+                    
+                    const cell3 = document.createElement('div');
+                    cell3.className = 'griditem';                    
+                    cell3.textContent = userAnswer;
+                    wronglist.appendChild(cell3);
+                    
+                    const cell4 = document.createElement('div');
+                    cell4.className = 'griditem';                    
+                    cell4.textContent = questionData[qnIndex][1];
+                    wronglist.appendChild(cell4);
+                    
+                }
+            }
+
+            restartButton.addEventListener('click', () => {
+                const newQuestionData = wrongnumbers.map(item => {
+                    const qnIndex = item[0][0];
+                    return questionData[qnIndex];
+                });
+                sessionStorage.setItem('questionData', JSON.stringify(newQuestionData));
+                sessionStorage.removeItem('wrongnumbers');
+                const params = new URLSearchParams();
+                params.append('qn', '1');
+                window.location.href = `/quest/?${params.toString()}`;
+            });
+            document.getElementById('backToHome').addEventListener('click', () => {
+                sessionStorage.clear();
+                window.location.href = '/';
+            });
+        </script>
+
+    </body>
+</html>
