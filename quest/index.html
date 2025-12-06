@@ -114,11 +114,11 @@
       document.getElementById('next').addEventListener('click', () => {
         const nextQn = qn + 1;
         if (nextQn > questionData.length) {
-          window.location.href = '/quest/result/';
+          window.location.href = '/Qsetter/quest/result/';
         } else {
           const params = new URLSearchParams();
           params.append('qn', nextQn.toString());
-          window.location.href = `/quest/?${params.toString()}`;
+          window.location.href = `/Qsetter/quest/?${params.toString()}`;
         }
       });
 
@@ -130,7 +130,7 @@
       document.getElementById('back').addEventListener('click', () => {
         if (confirm('途中で終了すると、これまでの成績は保存されません。本当に終了しますか？', '確認', 'はい', 'いいえ')) {
           sessionStorage.clear();
-          window.location.href = '/';
+          window.location.href = '/Qsetter';
         }
       });
 
