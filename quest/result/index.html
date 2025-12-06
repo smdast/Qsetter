@@ -82,7 +82,7 @@
                 sessionStorage.removeItem('wrongnumbers');
                 const params = new URLSearchParams();
                 params.append('qn', '1');
-                window.location.href = `/quest/?${params.toString()}`;
+                window.location.href = `/Qsetter/quest/?${params.toString()}`;
             });
             document.getElementById('backToHome').addEventListener('click', () => {
                 sessionStorage.clear();
