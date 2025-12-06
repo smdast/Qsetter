@@ -104,7 +104,7 @@
         }
         const dialog = document.querySelector('md-dialog');
         dialog.querySelector('[slot="headline"]').textContent = correct ? '正解！' : '不正解';
-        document.getElementById("details").textContent = `${correctAnswer}\nあなたの答え: ${userAnswer}`;
+        document.getElementById("details").textContent = `${strcorrectAnswer.replaceAll('&&',',　').replaceAll('||',' または ')}\nあなたの答え: ${userAnswer}`;
         document.getElementById('retry').style.display = correct ? 'none' : 'inline-block';
         await dialog.show();
         document.getElementById('next').focus();
