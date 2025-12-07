@@ -29,7 +29,7 @@
             // ページ読み込み時にquestionDataがなければホームにリダイレクト
             document.addEventListener('DOMContentLoaded', () => {
                 if (sessionStorage.getItem('questionData') === null) {
-                window.location.href = '/';
+                window.location.href = '/Qsetter';
                 console.log('No question data found, redirecting to home.');
                 }
                 document.getElementById('answerfield').focus();
