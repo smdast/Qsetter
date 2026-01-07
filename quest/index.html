@@ -58,6 +58,7 @@
       // 出題処理
       const questionData = JSON.parse(sessionStorage.getItem('questionData'));
       const qn = parseInt(new URLSearchParams(window.location.search).get('qn'));
+      console.log(questionData[qn - 1][0]);
       document.getElementById('question').textContent = questionData[qn - 1][0];
       document.getElementById("head").textContent = `${qn}問目 / ${questionData.length}問`;
       document.getElementById("progressbar").value = (qn - 1) / questionData.length;
