@@ -65,7 +65,7 @@
                     reader.onload = function(e) {
                         try {
                             const rawData = reader.result;
-                            questionData = rawData.split("\n").map(row => row.split(";"));
+                            questionData = rawData.split("\n").map(row => row.split("::"));
                             localStorage.setItem(file.name, JSON.stringify(questionData));
                             for (let i = 0; i < questionData.length; i++) {
                                 if (questionData[i].length != 2) {
