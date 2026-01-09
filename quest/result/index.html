@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -7,7 +7,7 @@
         <title>qsetter</title>
     </head>
     <body>
-        <header>出題結果</header>
+        <header><span style="margin: 0px 10px;">出題結果</span></header>
         <div style="margin: 30px; display:flex; flex-direction: column;">
             <h2>間違えた問題</h2>
             <div class="gridwrapper">
@@ -29,7 +29,7 @@
             // ページ読み込み時にquestionDataがなければホームにリダイレクト
             document.addEventListener('DOMContentLoaded', () => {
                 if (sessionStorage.getItem('questionData') === null) {
-                window.location.href = '/Qsetter';
+                window.location.href = '/Qsetter/';
                 console.log('No question data found, redirecting to home.');
                 }
                 document.getElementById('answerfield').focus();
@@ -82,11 +82,12 @@
                 sessionStorage.removeItem('wrongnumbers');
                 const params = new URLSearchParams();
                 params.append('qn', '1');
-                window.location.href = `/Qsetter/quest/?${params.toString()}`;
+                const form = new URLSearchParams(window.location.search).get('form');
+                window.location.href = `/Qsetter/quest/${form}/?${params.toString()}`;
             });
             document.getElementById('backToHome').addEventListener('click', () => {
                 sessionStorage.clear();
-                window.location.href = '/Qsetter';
+                window.location.href = '/Qsetter/';
             });
         </script>
 

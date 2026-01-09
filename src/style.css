@@ -19,7 +19,7 @@
   font-weight: bold;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  margin: 5px;
+  margin: 0px;
 }
 .answerbox {
   display: flex;
@@ -28,6 +28,30 @@
   bottom: 0;        /* 下端に配置 */
   left: 0;          /* 左端に寄せる */
   width: 100%;      /* 横幅いっぱい */
+}
+.choicebox {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px 0px;
+  align-items: center;
+  position: fixed;  /* 画面に対して固定 */
+  bottom: 0;        /* 下端に配置 */
+  width: 100%;      /* 横幅いっぱい */
+  padding: 10px 0;
+}
+.choices {
+    margin: 0 10px;
+    height: 2.5em;
+    font-size: 1.2em;
+}
+@media (max-width: 600px) {
+    .choicebox {
+        grid-template-columns: 1fr;
+    }
+    .choices {
+        height: auto;
+    }
+  
 }
 a {
   font-weight: 500;
@@ -39,9 +63,8 @@ a:hover {
 }
 
 body {
-  margin: 80px 0 0 0;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 0px;
+  min-width: 330px;
 }
 
 h1 {
@@ -56,13 +79,13 @@ h3 {
   margin: 10px 0px 5px 0px;
 }
     header {
-      position: fixed;
+      position: sticky;
       width:100%;
       top:0;
       left:0;
       background: #007dc8;
       color: #ffffff;
-      padding: 16px;
+      padding: 0.5em 0px;
       font-size: 1.4rem;
       font-weight: bold;
       z-index: 9999;
@@ -130,6 +153,7 @@ h3 {
   text-align: left;
 
 }
+
 
 .read-the-docs {
   color: #888;

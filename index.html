@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -7,7 +7,7 @@
         <title>qsetter</title>
     </head>
     <body>
-        <header>出題設定</header>
+        <header><span style="margin: 0px 10px;">出題設定</span></header>
         <div style="margin: 30px; display:flex; flex-direction: column;">
             <h2>問題ファイルを選択</h2>
             <div id="selectedfile" class="card">
@@ -25,6 +25,18 @@
                 </md-list-item>
             </md-list>
             <hr style="margin: 10px"/>
+            <h2>出題形式</h2>
+            <md-radio-group id="format" style="display: flex; flex-direction: row;">
+                <label style="display:flex; align-items: center; cursor: pointer; margin: 10px 15px;">
+                    <md-radio id="text-radio" style="margin-right: 10px;" name="format" value="text" checked></md-radio>
+                    記述式
+                </label>
+                <label style="display:flex; align-items: center; cursor: pointer; margin: 10px 15px;">
+                    <md-radio id="choice-radio" style="margin-right: 10px;" name="format" value="choice"></md-radio>
+                    選択式
+                </label>
+            </md-radio-group>
+            <hr style="margin: 10px"/>
             <h2>詳細設定</h2>
             <label style="display:flex; align-items: center; cursor: pointer;">
                 <md-checkbox id="randomOrder" touch-target="wrapper"></md-checkbox>
@@ -34,6 +46,7 @@
                 <md-checkbox id="rangelimit" touch-target="wrapper"></md-checkbox>
                 出題範囲を指定する
             </label>
+
             <div style="display: flex; align-items: center; margin: 0px 10px 10px 48px; gap: 10px;">                
                 <md-outlined-text-field label="開始番号" type="number" id="startindex" min="1" disabled></md-outlined-text-field>
                 ～
@@ -142,7 +155,8 @@
                 const params = new URLSearchParams();
                 params.append('qn',1);
                 sessionStorage.setItem('questionData', JSON.stringify(questionData));
-                window.location.href = `/Qsetter/quest/?${params.toString()}`;
+                const format = document.getElementById('text-radio').checked ? 'text' : 'choice';
+                window.location.href = `/Qsetter/quest/${format}/?${params.toString()}`;
             });
         </script>
     </body>
