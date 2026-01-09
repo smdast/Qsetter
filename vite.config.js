@@ -6,8 +6,9 @@ export default {
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        about: resolve(__dirname, "quest/index.html"),
-        contact: resolve(__dirname, "quest/result/index.html"),
+        quest1: resolve(__dirname, "quest/choice/index.html"),
+        quest2: resolve(__dirname, "quest/text/index.html"),
+        result: resolve(__dirname, "quest/result/index.html"),
       },
     },
   },
